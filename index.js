@@ -41,13 +41,18 @@ class BinaryTransferClient {
      * For example, to upload parts 10 through 15 of a file, use `firstPart` = 10 and `parts` = 6.
      * @param {string} [uploadKey] Optional upload key if this is a continuation of a previously
      * initiated upload.
+     * @param {number} [minutesExpiration] Custom expiration for the upload URLs
+     * (within the 1 to 60 minutes range). If not specified, default is 2 minutes.
      * @returns {Promise<object>} Signed URLs for uploading chunks of the file to AWS S3,
      * and a unique upload key used to generate additional URLs or to complete the upload.
      */
-    async _getUploadUrls(bucketKey, objectKey, parts = 1, firstPart = 1, uploadKey) {
+    async _getUploadUrls(bucketKey, objectKey, parts = 1, firstPart = 1, uploadKey, minutesExpiration) {
         let endpoint = `buckets/${bucketKey}/objects/${encodeURIComponent(objectKey)}/signeds3upload?parts=${parts}&firstPart=${firstPart}`;
         if (uploadKey) {
             endpoint += `&uploadKey=${uploadKey}`;
+        }
+        if (minutesExpiration) {
+            endpoint += `&minutesExpiration=${minutesExpiration}`;
         }
         const headers = {
             'Content-Type': 'application/json',
@@ -88,8 +93,10 @@ class BinaryTransferClient {
      * @param {string} bucketKey Bucket key.
      * @param {string} objectKey Name of uploaded object.
      * @param {Buffer} data Object content.
-     * @param {object} [options] Additional upload options. At the moment the only available
-     * option is `contentType`.
+     * @param {object} [options] Additional upload options.
+     * @param {string} [options.contentType] Optional content type of the uploaded file.
+     * @param {number} [options.minutesExpiration] Custom expiration for the upload URLs
+     * (within the 1 to 60 minutes range). If not specified, default is 2 minutes.
      * @returns {Promise<object>} Object description containing 'bucketKey', 'objectKey', 'objectId',
      * 'sha1', 'size', 'location', and 'contentType'.
      * @throws Error when the request fails, for example, due to insufficient rights, or incorrect scopes.
@@ -107,7 +114,8 @@ class BinaryTransferClient {
             while (true) {
                 console.debug('Uploading part', partsUploaded + 1);
                 if (uploadUrls.length === 0) {
-                    const uploadParams = await this._getUploadUrls(bucketKey, objectKey, Math.min(totalParts - partsUploaded, MaxBatches), partsUploaded + 1, uploadKey); // Automatically retries 429 and 500-599 responses
+                    // Automatically retries 429 and 500-599 responses
+                    const uploadParams = await this._getUploadUrls(bucketKey, objectKey, Math.min(totalParts - partsUploaded, MaxBatches), partsUploaded + 1, uploadKey, options?.minutesExpiration);
                     uploadUrls = uploadParams.urls.slice();
                     uploadKey = uploadParams.uploadKey;
                 }
@@ -139,8 +147,10 @@ class BinaryTransferClient {
      * @param {string} bucketKey Bucket key.
      * @param {string} objectKey Name of uploaded object.
      * @param {AsyncIterable<Buffer>} stream Input stream.
-     * @param {object} [options] Additional upload options. At the moment the only available
-     * option is `contentType`.
+     * @param {object} [options] Additional upload options.
+     * @param {string} [options.contentType] Optional content type of the uploaded file.
+     * @param {number} [options.minutesExpiration] Custom expiration for the upload URLs
+     * (within the 1 to 60 minutes range). If not specified, default is 2 minutes.
      * @returns {Promise<object>} Object description containing 'bucketKey', 'objectKey', 'objectId',
      * 'sha1', 'size', 'location', and 'contentType'.
      * @throws Error when the request fails, for example, due to insufficient rights, or incorrect scopes.
@@ -172,7 +182,7 @@ class BinaryTransferClient {
             while (true) {
                 console.debug('Uploading part', partsUploaded + 1);
                 if (uploadUrls.length === 0) {
-                    const uploadParams = await this._getUploadUrls(bucketKey, objectKey, MaxBatches, partsUploaded + 1, uploadKey);
+                    const uploadParams = await this._getUploadUrls(bucketKey, objectKey, MaxBatches, partsUploaded + 1, uploadKey, options?.minutesExpiration);
                     uploadUrls = uploadParams.urls.slice();
                     uploadKey = uploadParams.uploadKey;
                 }
@@ -203,10 +213,15 @@ class BinaryTransferClient {
      * @async
      * @param {string} bucketKey Bucket key.
      * @param {string} objectKey Object key.
+     * @param {number} [minutesExpiration] Custom expiration for the download URLs
+     * (within the 1 to 60 minutes range). If not specified, default is 2 minutes.
      * @returns {Promise<object>} Download URLs and potentially other helpful information.
      */
-    async _getDownloadUrl(bucketKey, objectKey, useCdn) {
-        const endpoint = `buckets/${bucketKey}/objects/${encodeURIComponent(objectKey)}/signeds3download?useCdn=${useCdn}`;
+    async _getDownloadUrl(bucketKey, objectKey, minutesExpiration) {
+        let endpoint = `buckets/${bucketKey}/objects/${encodeURIComponent(objectKey)}/signeds3download`;
+        if (minutesExpiration) {
+            endpoint += `?minutesExpiration=${minutesExpiration}`;
+        }
         const headers = {
             'Content-Type': 'application/json',
             'Authorization': 'Bearer ' + this.token
@@ -221,12 +236,15 @@ class BinaryTransferClient {
      * @async
      * @param {string} bucketKey Bucket key.
      * @param {string} objectKey Object key.
+     * @param {object} [options] Additional download options.
+     * @param {number} [options.minutesExpiration] Custom expiration for the download URLs
+     * (within the 1 to 60 minutes range). If not specified, default is 2 minutes.
      * @returns {Promise<ArrayBuffer>} Object content.
      * @throws Error when the request fails, for example, due to insufficient rights, or incorrect scopes.
      */
-    async downloadObject(bucketKey, objectKey) {
+    async downloadObject(bucketKey, objectKey, options) {
         console.debug('Retrieving download URL');
-        const downloadParams = await this._getDownloadUrl(bucketKey, objectKey);
+        const downloadParams = await this._getDownloadUrl(bucketKey, objectKey, options?.minutesExpiration);
         if (downloadParams.status !== 'complete') {
             throw new Error('File not available for download yet.');
         }
@@ -247,12 +265,15 @@ class BinaryTransferClient {
      * @async
      * @param {string} bucketKey Bucket key.
      * @param {string} objectKey Object name.
+     * @param {object} [options] Additional download options.
+     * @param {number} [options.minutesExpiration] Custom expiration for the download URLs
+     * (within the 1 to 60 minutes range). If not specified, default is 2 minutes.
      * @returns {Promise<ReadableStream>} Object content stream.
      * @throws Error when the request fails, for example, due to insufficient rights, or incorrect scopes.
      */
-    async downloadObjectStream(bucketKey, objectKey) {
+    async downloadObjectStream(bucketKey, objectKey, options) {
         console.debug('Retrieving download URL');
-        const downloadParams = await this._getDownloadUrl(bucketKey, objectKey);
+        const downloadParams = await this._getDownloadUrl(bucketKey, objectKey, options?.minutesExpiration);
         if (downloadParams.status !== 'complete') {
             throw new Error('File not available for download yet.');
         }
