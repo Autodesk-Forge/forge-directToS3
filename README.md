@@ -17,7 +17,7 @@
 ## Running locally
 
 - clone this repository or download
-- restore the packages
+- restore the packages (dotnet restore)
 - prepare an OSS bucket to upload your files to
 - replace the variable values at appsettings.json with your own
 
@@ -36,11 +36,15 @@
 
 ### Uploading local file to OSS bucket (loading the entire file into memory first)
 
-`dotnet run <path to local file> bucket`
+`dotnet run <path to local file> upload objectKey bucket`
 
 ### Uploading local file to Docs Folder (loading the entire file into memory first)
 
-`dotnet run <path to local file> docs`
+`dotnet run <path to local file> upload objectKey docs`
+
+### Downloading file from OSS bucket (receiving the entire file into memory first)
+
+`dotnet run <path to local file> download objectKey bucket`
 
 ## How does it work?
 
@@ -59,3 +63,9 @@ Here's a pseudo-code explaining how the new upload and download can be implement
    - If the response code is 403, the upload URLs have expired; go back to step #2
    - If you've used up all the upload URLs and there are still parts that must be uploaded, go back to step #2
 4. Finalize the upload using the `POST buckets/:bucketKey/objects/:objectKey/signeds3upload` endpoint, using the `uploadKey` value from step #2
+
+### Download
+
+1. Generate a download URL using the [GET buckets/:bucketKey/objects/:objectName/signeds3download](https://forge.autodesk.com/en/docs/data/v2/reference/http/buckets-:bucketKey-objects-:objectName-signeds3download-GET) endpoint
+2. Use the new URL to download the OSS object directly from AWS S3
+   - Consider retrying (for example, with an exponential backoff) the download when the response code is 100-199, 429, or 500-599
