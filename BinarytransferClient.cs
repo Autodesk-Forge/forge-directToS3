@@ -230,7 +230,7 @@ namespace Forge_Upload_DirectToS3
     /// <summary>
     /// Download the specific part through url
     /// </summary>
-    /// <param name="url">URL to upload the specified part</param>
+    /// <param name="url">URL to download the file</param>
     public static byte[] DownloadBufferRestSharp(string url)
     {
       RestClient client = new RestClient();
@@ -241,6 +241,12 @@ namespace Forge_Upload_DirectToS3
       return data;
     }
 
+    /// <summary>
+    /// Return the byte array of the downloaded content
+    /// </summary>
+    /// <param name="bucketKey">Bucket key</param>
+    /// <param name="objectKey">Object key</param>
+    /// <param name="minutesExpiration">[minutesExpiration] Custom expiration for the upload URLs (within the 1 to 60 minutes range). If not specified, default is 2 minutes.
     public static async Task<byte[]> DownloadFromBucket(string bucketKey, string objectKey, int? minutesExpiration)
     {
       dynamic downloadParams = await getDownloadUrl(bucketKey, objectKey, minutesExpiration);
