@@ -34,11 +34,11 @@
 - run the commands below at cs project level to upload your local files
 - you can upload to a bucket or to a folder by the second argument passed
 
-### Uploading local file to OSS bucket (loading the entire file into memory first)
+### Uploading local file to OSS bucket (through FileStream)
 
 `dotnet run <path to local file> upload objectKey bucket`
 
-### Uploading local file to Docs Folder (loading the entire file into memory first)
+### Uploading local file to Docs Folder (through FileStream)
 
 `dotnet run <path to local file> upload objectKey docs`
 
