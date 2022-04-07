@@ -1,4 +1,4 @@
-﻿# Forge-Upload-DirectToS3
+﻿# Forge-directToS3
 
 ![Platforms](https://img.shields.io/badge/platform-Windows|MacOS-lightgray.svg)
 ![.NET](https://img.shields.io/badge/.NET%20Core-3.1-blue.svg)
