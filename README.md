@@ -1,5 +1,15 @@
 # Forge-directToS3
 
+![Platforms](https://img.shields.io/badge/platform-Windows|MacOS-lightgray.svg)
+[![Node.js](https://img.shields.io/badge/Node.js-16.14.0-blue.svg)](https://nodejs.org/)
+
+[![oAuth2](https://img.shields.io/badge/oAuth2-v1-green.svg)](http://developer.autodesk.com/)
+[![Data-Management](https://img.shields.io/badge/Data%20Management-v2-green.svg)](http://developer.autodesk.com/)
+[![BIM360](https://img.shields.io/badge/BIM360-v1-green.svg)](http://developer.autodesk.com/)
+[![ACC](https://img.shields.io/badge/ACC-v1-green.svg)](http://developer.autodesk.com/)
+
+# Description
+
 Node.js utility for the new binary transfer in Autodesk Forge services.
 
 ## Running locally
