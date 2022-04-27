@@ -48,7 +48,7 @@ Please provide the path to your local file (i.e C:\Users\Harun\Desktop\Technical
 
 ### Downloading file from OSS bucket (receiving the entire file into memory first)
 
-Please provide the path to your local file (i.e C:\Users\Harun\Desktop\Technicalschoolcurrentm.rvt) and object key (i.e Technicalschoolcurrentm.rvt)
+Please provide the path to your local file (i.e `C:\Users\Harun\Desktop\Technicalschoolcurrentm.rvt`) and object key (i.e `Technicalschoolcurrentm.rvt`)
 
 `dotnet run <path to local file> download <objectKey> bucket`
 
