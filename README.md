@@ -36,13 +36,13 @@
 
 ### Uploading local file to OSS bucket (through FileStream)
 
-Please provide the path to your local file (i.e C:\Users\Harun\Desktop\Technicalschoolcurrentm.rvt) and object key (i.e Technicalschoolcurrentm.rvt)
+Please provide the path to your local file (i.e `C:\Users\Harun\Desktop\Technicalschoolcurrentm.rvt`) and object key (i.e `Technicalschoolcurrentm.rvt`)
 
 `dotnet run <path to local file> upload <objectKey> bucket`
 
 ### Uploading local file to Docs Folder (through FileStream)
 
-Please provide the path to your local file (i.e C:\Users\Harun\Desktop\Technicalschoolcurrentm.rvt) and object key (i.e Technicalschoolcurrentm.rvt)
+Please provide the path to your local file (i.e `C:\Users\Harun\Desktop\Technicalschoolcurrentm.rvt`) and object key (i.e `Technicalschoolcurrentm.rvt`)
 
 `dotnet run <path to local file> upload <objectKey> docs`
 
