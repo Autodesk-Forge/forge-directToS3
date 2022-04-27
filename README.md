@@ -36,15 +36,21 @@
 
 ### Uploading local file to OSS bucket (through FileStream)
 
-`dotnet run <path to local file> upload objectKey bucket`
+Please provide the path to your local file (i.e `C:\Users\Harun\Desktop\Technicalschoolcurrentm.rvt`) and object key (i.e `Technicalschoolcurrentm.rvt`)
+
+`dotnet run <path to local file> upload <objectKey> bucket`
 
 ### Uploading local file to Docs Folder (through FileStream)
 
-`dotnet run <path to local file> upload objectKey docs`
+Please provide the path to your local file (i.e `C:\Users\Harun\Desktop\Technicalschoolcurrentm.rvt`) and object key (i.e `Technicalschoolcurrentm.rvt`)
+
+`dotnet run <path to local file> upload <objectKey> docs`
 
 ### Downloading file from OSS bucket (receiving the entire file into memory first)
 
-`dotnet run <path to local file> download objectKey bucket`
+Please provide the path to your local file (i.e `C:\Users\Harun\Desktop\Technicalschoolcurrentm.rvt`) and object key (i.e `Technicalschoolcurrentm.rvt`)
+
+`dotnet run <path to local file> download <objectKey> bucket`
 
 ## How does it work?
 
